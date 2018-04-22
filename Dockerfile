@@ -1,4 +1,4 @@
-FROM careerlist/python-postgresql-app:3.6-slim
+FROM careerlist/python-app:3.6-slim
 
 LABEL maintainer="careerlist"
 
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 ENV GOOGLE_DIR=/google \
-  GCLOUD_BINARY_VERSION=186.0.0 \
+  GCLOUD_BINARY_VERSION=198.0.0 \
   ADDITIONAL_COMPONENTS=beta
 
 WORKDIR ${GOOGLE_DIR}
