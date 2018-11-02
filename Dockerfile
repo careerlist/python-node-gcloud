@@ -1,4 +1,4 @@
-FROM careerlist/python-app:3.6-slim
+FROM careerlist/python-app:3.7-slim
 
 LABEL maintainer="careerlist"
 
