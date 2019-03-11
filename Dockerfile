@@ -2,7 +2,7 @@ FROM careerlist/python-app:3.7-slim
 
 LABEL maintainer="careerlist"
 
-ENV NODE_VERSION 8.9.4
+ENV NODE_VERSION 10.15.3
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   xz-utils \
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 ENV GOOGLE_DIR=/google \
-  GCLOUD_BINARY_VERSION=223.0.0 \
+  GCLOUD_BINARY_VERSION=237.0.0 \
   ADDITIONAL_COMPONENTS=beta
 
 WORKDIR ${GOOGLE_DIR}
