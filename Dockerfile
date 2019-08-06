@@ -21,6 +21,8 @@ ENV GOOGLE_DIR=/google \
 WORKDIR ${GOOGLE_DIR}
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+  jq \
+  zip \
   python \
   && curl -SLO "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_BINARY_VERSION}-linux-x86_64.tar.gz" \
   && tar -xzf "google-cloud-sdk-${GCLOUD_BINARY_VERSION}-linux-x86_64.tar.gz" \
