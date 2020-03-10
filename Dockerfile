@@ -1,35 +1,42 @@
-FROM careerlist/python-app:3.7-slim
+ARG PYTHON_TAG=3.7.2-slim
+FROM careerlist/python-app:${PYTHON_TAG}
 
-LABEL maintainer="careerlist"
+ARG PYTHON_TAG
+ARG NODE_VERSION=12.13.0
+ARG GCLOUD_VERSION=284.0.0
+ARG BUILD_DATE
+ARG VCS_REF
 
-ENV NODE_VERSION 12.13.0
+LABEL org.label-schema.python-tag=${PYTHON_TAG} \
+  org.label-schema.node-version=${NODE_VERSION} \
+  org.label-schema.gcloud-version=${GCLOUD_VERSION} \
+  org.label-schema.build-date=${BUILD_DATE} \
+  org.label-schema.vcf-ref=${VCS_REF} \
+  org.label-schema.URL="https://github.com/careerlist/python-node-gcloud" \
+  maintainer="https://github.com/careerlist"
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  # install NodeJS
-  xz-utils \
-  && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
+RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
   # cleanup
-  && apt-get purge -y --auto-remove \
-  xz-utils \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 ENV GOOGLE_DIR=/google \
-  GCLOUD_BINARY_VERSION=279.0.0 \
   ADDITIONAL_COMPONENTS=beta
 
-WORKDIR ${GOOGLE_DIR}
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN mkdir -p ${GOOGLE_DIR} && cd ${GOOGLE_DIR} && apt-get update && apt-get install -y --no-install-recommends \
+  # install CI tools
   jq \
   zip \
-  # install gloud SDK
-  && curl -SLO "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_BINARY_VERSION}-linux-x86_64.tar.gz" \
-  && tar -xzf "google-cloud-sdk-${GCLOUD_BINARY_VERSION}-linux-x86_64.tar.gz" \
-  && rm "google-cloud-sdk-${GCLOUD_BINARY_VERSION}-linux-x86_64.tar.gz" \
-  && google-cloud-sdk/install.sh --usage-reporting=false --path-update=false --bash-completion=false --additional-components $ADDITIONAL_COMPONENTS \
+  lftp \
+  openssh-client \
+  coreutils \
+  # install gcloud SDK
+  && curl -SLO "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
+  && tar -xzf "google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
+  && rm "google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
+  && google-cloud-sdk/install.sh --usage-reporting=false --path-update=false --bash-completion=false --additional-components ${ADDITIONAL_COMPONENTS} \
   && google-cloud-sdk/bin/gcloud config set --installation component_manager/disable_update_check true \
   && rm -rf google-cloud-sdk/.install/.backup \
   && rm -rf google-cloud-sdk/.install/.download \
@@ -42,4 +49,3 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV PATH=${PATH}:${GOOGLE_DIR}:${GOOGLE_DIR}/google-cloud-sdk/bin
 
-WORKDIR ${APP_DIR}
