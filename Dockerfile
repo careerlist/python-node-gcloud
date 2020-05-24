@@ -2,8 +2,8 @@ ARG PYTHON_TAG=3.7.7-slim
 FROM careerlist/python-app:${PYTHON_TAG}
 
 ARG PYTHON_TAG
-ARG NODE_VERSION=12.13.0
-ARG GCLOUD_VERSION=291.0.0
+ARG NODE_VERSION=12.16.3
+ARG GCLOUD_VERSION=293.0.0
 ARG BUILD_DATE
 ARG VCS_REF
 
@@ -21,6 +21,8 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   # cleanup
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+RUN npm install -g yarn && yarn global add bolt
 
 ENV GOOGLE_DIR=/google \
   ADDITIONAL_COMPONENTS=beta
